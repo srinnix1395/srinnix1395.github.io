@@ -9,9 +9,9 @@ Bài viết là phần thứ III của series bài học vỡ lòng về *Dagger
 
 # Các bài học để lên lớp
 
-1. [[Android] Dagger 2 - Phần I: Basic principles](https://kipalog.com/posts/Android--Dagger-2---Phan-I--Basic-principles)
-2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://kipalog.com/posts/Android--Dagger-2---Phan-II--Into-the-Dagger-2)
-3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies](https://kipalog.com/posts/Android--Dagger-2---Phan-III---1--The-time-of-our-dependencies)
+1. [[Android] Dagger 2 - Phần I: Basic principles](https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/)
+2. [[Android] Dagger 2 - Phần II: Into the Dagger 2](https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-II/)
+3. [[Android] Dagger 2 - Phần III - 1: The time of our dependencies](https://srinnix1395.github.io/posts/Android-Dagger-2-Ph%E1%BA%A7n-III-1/)
 4. [Android] Dagger 2 - Phần III - 2: The time of our dependencies
 5. [[Android] Dagger 2 - Phần IV: A new horizon]()
 
