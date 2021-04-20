@@ -118,7 +118,7 @@ Run thử phát cho nó lung linh:
 
 Các dev nhà mình thường sẽ thêm ngay một `View` vào dưới cùng của layout, set độ cao, màu... Và tất nhiên, cách làm ngắn gọn này sẽ có những tác dụng phụ. Một tác dụng phụ dễ thấy nhất là sẽ tăng thêm độ sâu cho layout (_layout hierarchy_, trong trường hợp này là 2 thay vì 1), đồng thời làm tăng số lượng `View` lên một cách không cần thiết. Ngoài ra, bạn sẽ khó control các divider hơn nếu chúng là một phần của từng `View` (bạn phải dựa vào position, data để setup divider tùy theo), và điều đó hoàn toàn không flexible chút nào. And `ItemDecoration` to the rescue!!!
 
-Ở đây, bạn cần tìm hiểu tiếp một method nữa đã được đề cập đến ở trên: `onDraw`. Method này dùng để vẽ những gì bạn muốn decor cho `RecyclerView`. Tuy nhiên hãy lưu ý rằng, đoạn vẽ này sẽ được vẽ trước khi `RecyclerView` vẽ các item trong list. Nếu muốn vẽ lên trên, hãy kiên nhẫn đọc tiếp (hoặc bỏ qua phần này kéo đến) [phần sau]("").
+Ở đây, bạn cần tìm hiểu tiếp một method nữa đã được đề cập đến ở trên: `onDraw`. Method này dùng để vẽ những gì bạn muốn decor cho `RecyclerView`. Tuy nhiên hãy lưu ý rằng, đoạn vẽ này sẽ được vẽ trước khi `RecyclerView` vẽ các item trong list. Nếu muốn vẽ lên trên, hãy kiên nhẫn đọc tiếp đến (hoặc bỏ qua phần này kéo đến) phần sau.
 
 Chúng ta sẽ tạo một class kế thừa từ `ItemDecoration` như phần trên:
 
