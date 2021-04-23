@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="en-US" mode="dark" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.0" /><meta property="og:title" content="[Android] Dagger 2 - Phần I: Basic principles" /><meta property="og:locale" content="en_US" /><meta name="description" content="Mình biết đến Dagger (chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ (AndroidWeekly là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: Inversion of control, Dependency inversion, Dependency injection (DI) và một library thường được sử dụng để implement DI trong Android: Dagger2. Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng DI có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy &amp; paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về DI mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với DI trong Android." /><meta property="og:description" content="Mình biết đến Dagger (chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ (AndroidWeekly là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: Inversion of control, Dependency inversion, Dependency injection (DI) và một library thường được sử dụng để implement DI trong Android: Dagger2. Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng DI có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy &amp; paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về DI mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với DI trong Android." /><link rel="canonical" href="https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/" /><meta property="og:url" content="https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/" /><meta property="og:site_name" content="srinnix13" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2021-04-20T07:42:01+00:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="[Android] Dagger 2 - Phần I: Basic principles" /><meta name="twitter:site" content="@srinnix13" /><meta name="google-site-verification" content="google_meta_tag_verification" /> <script type="application/ld+json"> {"description":"Mình biết đến Dagger (chính xác là Dagger 2) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ (AndroidWeekly là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: Inversion of control, Dependency inversion, Dependency injection (DI) và một library thường được sử dụng để implement DI trong Android: Dagger2. Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng DI có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy &amp; paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về DI mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với DI trong Android.","headline":"[Android] Dagger 2 - Phần I: Basic principles","dateModified":"2021-04-20T09:17:05+00:00","datePublished":"2021-04-20T07:42:01+00:00","url":"https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/"},"@context":"https://schema.org"}</script><title>[Android] Dagger 2 - Phần I: Basic principles | srinnix13</title><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon"><link rel="icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon"><link rel="apple-touch-icon" href="/assets/img/favicons/apple-icon.png"><link rel="apple-touch-icon" href="/assets/img/favicons/apple-icon-precomposed.png"><link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicons/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicons/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicons/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicons/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicons/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicons/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicons/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicons/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicons/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicons/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/manifest.json"><meta name='msapplication-config' content='/assets/img/favicons/browserconfig.xml'><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/assets/img/favicons/ms-icon-144x144.png"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="cdn.jsdelivr.net"><link rel="dns-prefetch" href="cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script defer src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.15.0,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.js"></script> <script defer src="https://www.googletagmanager.com/gtag/js?id="></script> <script> document.addEventListener("DOMContentLoaded", function(event) { window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', ''); }); </script><body data-spy="scroll" data-target="#toc"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" alt="avatar" class="mx-auto"> <img src="/resources/github_avatar.jpeg" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">srinnix13</a></div><div class="site-subtitle font-italic">The man who is looking for an olive branch and a piece of cheese, of course!</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tags ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center"> <a href="https://github.com/srinnix1395" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github-alt"></i> </a> <a href="https://twitter.com/srinnix13" aria-label="twitter" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a> <a href="https://www.linkedin.com/in/srinnix13" aria-label="linkedin" target="_blank" rel="noopener"> <i class="fab fa-linkedin"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['srinnix13','gmail.com'].join('@')" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a></div></div><div id="topbar-wrapper" class="row justify-content-center topbar-down"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Posts </a> </span> <span>[Android] Dagger 2 - Phần I: Basic principles</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="post-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>[Android] Dagger 2 - Phần I: Basic principles</h1><div class="post-meta text-muted d-flex flex-column"><div> <span class="semi-bold"> tuha3 </span> <span class="timeago " data-toggle="tooltip" data-placement="bottom" title="Tue, Apr 20, 2021, 7:42 AM +0000" prep="on" > Apr 20 <i class="unloaded">2021-04-20T07:42:01+00:00</i> </span></div><div> <span> <span class="timeago lastmod" data-toggle="tooltip" data-placement="bottom" title="Tue, Apr 20, 2021, 4:17 PM +0700" prefix="Updated " > Apr 20 <i class="unloaded">2021-04-20T09:17:05+00:00</i> </span> </span> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="2520 words">14 min</span></div></div><div class="post-content"><p>Mình biết đến <em>Dagger</em> (chính xác là <em>Dagger 2</em>) khi còn đi thực tập ở một công ty. Vì chỉ là một android intern làm việc 4 tiếng một ngày nên công việc chính của mình chỉ là fix một vài cái issue bé bé hay implement vài tính năng dùng đầu thì ít mà dùng tay thì nhiều. Bởi vậy, sau khi hoàn thành một cách khá nhanh chóng các công việc đó, mình dành thời gian để đọc thêm về công nghệ (<a href="https://androidweekly.net/">AndroidWeekly</a> là một nguồn mình recommend cho các bạn). Và mình bắt đầu biết về các khái niệm: <em>Inversion of control</em>, <em>Dependency inversion</em>, <em>Dependency injection</em> (DI) và một library thường được sử dụng để implement <em>DI</em> trong Android: <a href="https://google.github.io/dagger/">Dagger2</a>. Thực sự trong một thời gian sau đó, mình có và cố đọc thêm nhiều article, đọc thêm code example về chủ đề này. Tuy nhiên, do không thực sự cần, không thực sự hiểu sử dụng <em>DI</em> có tác dụng gì đối với project sẽ làm (và công nhận đây cũng là một chủ đề khó nhằn với một người chưa có nhiều kinh nghiệm về lập trình), mình đơn giản chỉ copy &amp; paste và thay đổi giá trị tương ứng để chạy được ứng dụng. Tuy nhiên, trẻ con rồi cũng phải đến lúc cắp sách đến trường, để hiểu câu nói ngày xưa mình bắt chước bố mẹ nghĩa là gì. Bởi vậy, mình muốn hệ thống lại những kiến thức của mình về <em>DI</em> mà mình đã đọc và đã nghiệm ra trong quá trình bắt chước, hy vọng series có thể trở thành bài học vỡ lòng cho những bạn bắt đầu làm quen với <em>DI</em> trong Android.</p><p align="center"> <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/nol8cqcf0x_riccardo-mion-IutqINJUAts-unsplash.jpg" /> Photo by <a href="https://unsplash.com/@riccardomion?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Riccardo Mion</a> on <a href="/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></p><h1 id="các-bài-học-để-lên-lớp">Các bài học để lên lớp</h1><ol><li>[Android] Dagger 2 - Phần I: Basic principles<li><a href="https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-II/">[Android] Dagger 2 - Phần II: Into the Dagger 2</a><li><a href="https://srinnix1395.github.io/posts/Android-Dagger-2-Ph%E1%BA%A7n-III-1/">[Android] Dagger 2 - Phần III - 1: The time of our dependencies</a><li><a href="https://srinnix1395.github.io/posts/Android-Dagger-2-Ph%E1%BA%A7n-III-2/">[Android] Dagger 2 - Phần III - 2: The time of our dependencies</a><li><a href="">[Android] Dagger 2 - Phần IV: A new horizon</a></ol><h1 id="kiến-thức-đầu-vào">Kiến thức đầu vào</h1><ul><li>Không bị ở lại lớp vì môn <em>Lập trình hướng đối tượng</em>, <em>Lập trình Android cơ bản</em><li>Đã đi học thêm về <em>Kotlin</em> (Vì các ví dụ mình sẽ sử dụng Kotlin)</ul><h1 id="lý-thuyết">Lý thuyết</h1><p>Trước hết, chúng ta đi qua một số khái niệm để hiểu rõ hơn background của vấn đề:</p><h3 id="dependency">Dependency</h3><p><em>Dependency</em> là từ dùng để mô tả việc một module cấp cao phụ thuộc vào một module cấp thấp. VD: khi chúng ta học toán, chúng ta cần có một quyển sách toán. Ta có thể trừu tượng hóa vấn đề đó thành các đối tượng: <code class="language-plaintext highlighter-rouge">Student</code> và <code class="language-plaintext highlighter-rouge">MathBook</code></p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre>class Student {
+
+    private var book: MathBook
+
+    constructor() {
+        this.book = MathBook()
+    }
+
+    fun learn() {
+        println("Learning ${book.getSubjectName()}")
+    }
+}
+
+class MathBook {
+
+    fun getSubjectName(): String {
+        return "Math"
+    }
+}
+</pre></table></code></div></div><p>Và ở hàm <code class="language-plaintext highlighter-rouge">main()</code>, ta sẽ gọi như sau:</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>fun main(args: Array&lt;String&gt;) {
+    val student = Student()
+    student.learn()
+}
+</pre></table></code></div></div><p>Ở đây, học sinh cần quyển sách toán để học và nếu không có sách toán, học sinh không thể hoàn thành việc học được. Bởi vậy, ta nói “<code class="language-plaintext highlighter-rouge">Student</code> phụ thuộc vào <code class="language-plaintext highlighter-rouge">MathBook</code>” hay “<code class="language-plaintext highlighter-rouge">MathBook</code> được gọi là dependency của <code class="language-plaintext highlighter-rouge">Student</code>”.</p><p>Theo cách tiếp cận OOP, các class sẽ tương tác qua lại với nhau để có thể hoàn thành những chứng năng của app. Như trong ví dụ trên, <code class="language-plaintext highlighter-rouge">Student</code> tương tác (khởi tạo và quản lý vòng đời) với <code class="language-plaintext highlighter-rouge">MathBook</code>. Điều này sẽ dẫn chúng ta đến một khái niệm mới: <em>hard dependency</em>.</p><p><em>Hard dependency</em> là khái niệm để mô tả những trường hợp các dependency được khởi tạo trực tiếp thay vì được truyền vào từ bên ngoài vào. Tại sao <em>hard dependency</em> lại không tốt:</p><ul><li><em>Hard dependency</em> làm giảm tính tái sử dụng của các module<li><em>Hard dependency</em> làm việc kiểm thử khó khăn hơn<li><em>Hard dependency</em> làm cho việc maintain code khó hơn khi project được scale up.</ul><h5 id="tính-tái-sử-dụng">#Tính tái sử dụng</h5><p>Khi tồn tại nhiều <em>hard dependency</em>, mỗi khi khởi tạo module cấp cao sẽ bắt buộc khởi tạo các module cấp thấp. Các module sẽ bị ràng buộc với nhau hơn. Từ đó, tính tái sử dụng của các module sẽ bị giảm đi</p><h5 id="kiểm-thử">#Kiểm thử</h5><p>Khi thực hiện việc kiểm thử, ta cần cô lập module với các phần còn lại của app bằng cách mock các module cấp thấp. Tuy nhiên, nếu ta <em>hard dependency</em> như trường hợp ở trên, ta không thể mock <code class="language-plaintext highlighter-rouge">book</code> để test được module <code class="language-plaintext highlighter-rouge">Student</code>.</p><h5 id="khả-năng-maintain-code">#Khả năng maintain code</h5><p>Cuối cùng, nếu các module không được tái sử dụng, nếu quá trình kiểm thử không được thực hiện đầy đủ mà project lại ngày càng phình to ra, việc maintain code đều sẽ gây khó khăn đối với cả các “ma cũ” lẫn “ma mới” của project.</p><p><strong>Tóm lại vấn đề</strong>: việc <em>hard dependency</em> sẽ làm cho các module <em>tight coupling</em> (dính chặt) vào nhau hơn, từ đó sẽ làm giảm tính tính tái sử dụng và tính mở rộng của module (Ngược lại với <em>tight coupling</em>, chúng ta có <em>loose coupling</em> và sẽ là mục tiêu mà chúng ta hướng đến khi sử dụng DI). Để giải quyết vấn đề này, chúng ta sẽ áp dụng nguyên lý <em>Inversion of Control</em> (IoC)</p><h3 id="inversion-of-control---ioc">Inversion of control - IoC</h3><p><em>IoC</em> là một design principle (không phải là design pattern), được sử dụng để đảo ngược các loại điều khiển khác nhau trong OOP design. Ở đây, việc điều khiển có thể là:</p><ul><li>Điều khiển flow của một ứng dụng<li>Điều khiển flow của việc khởi tạo các dependency của một module.</ul><p>Và ý thứ hai+ viết hôm nay của chúng ta. Chúng ta tiếp tục với ví dụ ở phần trước: <code class="language-plaintext highlighter-rouge">MathBook</code> được khởi tạo trực tiếp bên trong <code class="language-plaintext highlighter-rouge">Student</code>. Từ đó ta có <em>hard dependency</em>. <em>IoC</em> gợi ý chúng ta giải quyết vấn đề này bằng cách đảo ngược việc điều khiển: thay vì tự khởi tạo, đơn giản ta chỉ cần giao việc khởi tạo này cho một class khác. Ví dụ ở trên có thể được sửa lại như sau:</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre>class Student {
+
+    private var book: MathBook
+
+    constructor() {
+        this.book = BookFactory.getBook()
+    }
+
+    fun learn() {
+        println("Learning ${book.getSubjectName()}")
+    }
+}
+
+object BookFactory {
+
+    fun getBook(): MathBook {
+        return MathBook()
+    }
+}
+</pre></table></code></div></div><p>Thay vì quan tâm đến việc khởi tạo, ta lấy <code class="language-plaintext highlighter-rouge">MathBook</code> từ <code class="language-plaintext highlighter-rouge">BookFactory</code> và không quan tâm xem <code class="language-plaintext highlighter-rouge">MathBook</code> được tạo ra thế nào nữa. Cách giải quyết này sử dụng design pattern <em>Factory</em>, một trong những design pattern impelement <em>IoC</em>.</p><p align="center"> <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/6k99fg3w4p_ioc-patterns.png" /> Các design pattern implement <i>Inversion of control</i>. Nguồn: <a href="https://www.tutorialsteacher.com/ioc/inversion-of-control">Inversion of Control</a></p><p>Tuy nhiên, khi project được scale up lên, chúng ta vẫn chưa hoàn toàn giải quyết được vấn đề để đạt được <em>loose coupling</em>. Một số vấn đề phát sinh là:</p><ul><li><code class="language-plaintext highlighter-rouge">Student</code> đang là module cấp cao, phụ thuộc vào một module cấp thấp hơn là <code class="language-plaintext highlighter-rouge">MathBook</code>. Vì vậy, việc sửa đổi module cấp thấp sẽ kéo theo một loạt các sửa đổi ở module cấp cao, điều đó làm việc maintain code trở nên phức tạp hơn.<li>Nếu càng ngày <code class="language-plaintext highlighter-rouge">Student</code> càng học lên cao, môn học sẽ thay đổi theo thời gian và sách cũng cần thay đổi theo.</ul><p>Để giải quyết vấn đề này, ta cần đến một design principle khác: <em>Dependency inversion</em></p><h3 id="dependency-inversion---dip">Dependency inversion - DIP</h3><p>Trong những nguyên lý thiết kế trong lập trình hướng đối tượng <em>SOLID</em>, <em>DIP</em> là nguyên lý cuối cùng. Nội dung của nguyên lý này như sau:</p><ul><li>Các module cấp cao không nên phụ thuộc vào các module cấp thấp hơn. Cả hai nên phụ thuộc vào trừ tượng<li>Trừu tượng không nên phụ thuộc vào chi tiết mà chi tiết nên phụ thuộc vào trừu tượng.</ul><p>Lần đầu tiên đọc nội dung này, mình thấy abstract vãi nồi~~ Có lẽ chúng ta nên “phụ thuộc” vào chi tiết trước (lấy ví dụ), rồi mới nên “phụ thuộc” vào trừu tượng sau (đọc lại nguyên lý để ngẫm tiếp) :D.</p><p>Mình sẽ tiếp tục phân tích ví dụ phía trên: Ta thấy module cấp cao là <code class="language-plaintext highlighter-rouge">Student</code> đang phụ thuộc vào <code class="language-plaintext highlighter-rouge">MathBook</code> tức là phụ thuộc vào chi tiết thay vì trừu tượng. Để code tuân thủ đúng theo <em>DIP</em>, ta cần trừu tượng hóa module cấp thấp bằng cách tạo một interface:</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>interface TextBook {
+
+    fun getSubjectName(): String
+}
+</pre></table></code></div></div><p>Từ đó, bất kỳ quyển sách mới nào cũng cần implement <code class="language-plaintext highlighter-rouge">TextBook</code> và triển khai các function bên trong:</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>class MathBook : TextBook {
+
+    override fun getSubjectName(): String {
+        return "Math"
+    }
+}
+</pre></table></code></div></div><p>Đối với <code class="language-plaintext highlighter-rouge">BookFactory</code>, ta cũng sẽ trả về một kiểu trừu tượng <code class="language-plaintext highlighter-rouge">TextBook</code> thay vì trả về một kiểu cụ thể:</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>object BookFactory {
+
+    fun getBook(): TextBook {
+        return MathBook()
+    }
+}
+</pre></table></code></div></div><p>Cuối cùng, ta sửa thuộc tính <code class="language-plaintext highlighter-rouge">book</code> của <code class="language-plaintext highlighter-rouge">Student</code> thành kiểu trừu tượng để nếu có học sang quyển sách khác, ta không cần phải sửa đổi <code class="language-plaintext highlighter-rouge">Student</code>:</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre>class Student {
+
+    private var book: TextBook
+
+    constructor() {
+        this.book = BookFactory.getBook()
+    }
+
+    fun learn() {
+        println("Learning ${book.getSubjectName()}")
+    }
+}
+</pre></table></code></div></div><p>Sau khi sửa đổi, việc thiết kế đã tuân theo các rule của <em>DIP</em>:</p><ul><li>Cả module cấp cao <code class="language-plaintext highlighter-rouge">Student</code> và module cấp thấp <code class="language-plaintext highlighter-rouge">MathBook</code> đều phụ thuộc vào trừu tượng (<code class="language-plaintext highlighter-rouge">TextBook</code>).<li>Chi tiết đang phụ thuộc vào trừu tượng: <code class="language-plaintext highlighter-rouge">Student</code> phụ thuộc vào <code class="language-plaintext highlighter-rouge">TextBook</code> thay vì <code class="language-plaintext highlighter-rouge">MathBook</code>.</ul><p>Việc này giúp chúng ta lại tiến thêm một bước nữa trong việc đạt được <em>loose coupling</em>: Chúng ta có thể sửa đổi module cấp thấp mà không làm ảnh hưởng đến module cấp cao hoặc chúng ta có thể thay thế hẳn một module cấp thấp khác, miễn là nó tuân theo cái khung <code class="language-plaintext highlighter-rouge">TextBook</code>.</p><p>Như vậy, chúng ta đã tìm hiểu về khái niệm <em>IoC</em> và <em>Dependency inversion</em> nhằm mục đích đạt được <em>loose coupling</em>. Với ví dụ đã xét, chúng ta sử dụng design pattern <em>Factory</em> để đạt được <em>IoC</em>. Tuy nhiên, với <em>Factory</em>, module cấp cao vẫn có một chút liên quan đến việc khởi tạo module cấp thấp khi chúng ta get ra module cấp thấp từ <em>Factory</em> khi muốn khởi tạo. Để hoàn toàn tách rời việc khởi tạo module cấp thấp ra khỏi module cấp cao, chúng ta sẽ áp dụng một design pattern khác và là main của series này: <em>Dependency injection</em>.</p><p align="center"> <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/45dk2f9666_diana-polekhina-meEnpiwpzTA-unsplash.jpg" /> Photo by <a href="https://unsplash.com/@diana_pole?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Diana Polekhina</a> on <a href="/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></p><h3 id="dependency-injection">Dependency injection</h3><p>Vậy <em>Dependency injection</em> là gì? <em>DI</em> là một design pattern tuân theo <em>IoC</em>. Nó giúp chúng ta khởi tạo các dependency bên ngoài của module và cung cấp các dependency đó cho chúng ta thông qua nhiều cách. Với việc sử dụng <em>DI</em>, chúng ta đã loại bỏ hoàn toàn việc liên quan của một module đến việc khởi tạo các dependency của module đó.</p><p>Chúng ta có thể mô tả <em>DI</em> bằng quan hệ của ba class:</p><ol><li>Client class: Module cấp cao và sẽ phụ thuộc vào service class.<li>Service class: Module cấp thấp và là phụ thuộc của client class.<li>Injector class: Người trung gian kết nối client class với service class bằng cách inject service class vào client class.</ol><p>Và mô hình sau sẽ giúp chúng ta mường tượng ra dễ hơn sự kết nối giữa ba class:</p><p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://s3-ap-southeast-1.amazonaws.com/kipalog.com/p0yv1x6gay_DI.png" alt="alt text" /></p><p>Như chúng ta thấy, <em>injector class</em> khởi tạo <em>service class</em> và inject nó vào <em>client class</em>. Theo cách này, <em>DI</em> làm cho <em>client class</em> sẽ hoàn toàn không liên quan đến việc khởi tạo <em>service class</em> như thế nào hay bao giờ nữa.</p><h4 id="các-kiểu-inject">Các kiểu inject</h4><p><em>Injector class</em> có 3 cách để inject một <em>service class</em> vào <em>client class</em>. Đó là constructor injection, property injection và method injection.</p><ul><li>Constructor injection: <em>injector class</em> inject <em>service class</em> thông qua constructor của <em>client class</em><li>Property injection: <em>injector class</em> inject <em>service class</em> trực tiếp vào một public property của <em>client class</em><li>Method injection: <em>client class</em> sẽ implement một interface chứa một method để cung cấp dependency và <em>injector class</em> sẽ sử dụng interface này để cung cấp <em>service class</em> cho <em>client class</em>.</ul><p>Chúng ta sẽ tiếp tục nâng cấp ví dụ ban đầu để làm ví dụ cho từng kiểu inject.</p><h5 id="constructor-injection">Constructor injection</h5><p><em>Injector class</em> sẽ inject <code class="language-plaintext highlighter-rouge">TextBook</code> vào <code class="language-plaintext highlighter-rouge">Student</code> thông qua một constructor. Bởi vậy, ta cần một constructor có tham số là <code class="language-plaintext highlighter-rouge">TextBook</code>:</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre>class Student {
+
+    private var book: TextBook
+
+    constructor() {
+        this.book = MathBook()
+    }
+
+    // TextBook sẽ được inject vào thông qua constructor này
+    constructor(book: TextBook) {
+       this.book = book
+    }
+
+    fun learn() {
+        println("Learning ${book.getSubjectName()}")
+    }
+}
+</pre></table></code></div></div><p>Đối với kiểu inject này, một đối tượng <code class="language-plaintext highlighter-rouge">TextBook</code> phải được khởi tạo trước để làm “nguyên liệu” cho việc khởi tạo <code class="language-plaintext highlighter-rouge">Student</code>.</p><h5 id="property-injection">Property injection</h5><p>Khi sử dụng <em>property injection</em>, access modifier của property muốn được inject không được là <em>private</em> bởi <em>injector class</em> sẽ gán trực tiếp <em>service class</em> vào <em>client class</em>:</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+</pre><td class="rouge-code"><pre>class Student {
+
+    lateinit var book: TextBook
+
+    constructor() {
+      Injector.inject(this)
+    }
+
+    fun learn() {
+        println("Learning ${book.getSubjectName()}")
+    }
+}
+
+object Injector {
+
+    fun inject(student: Student) {
+        student.book = createBook();
+    }
+
+    private fun createBook(): TextBook {
+        return MathBook()
+    }
+}
+</pre></table></code></div></div><h5 id="method-injection">Method injection</h5><p>Cách inject cuối cùng là <em>method injection</em> khi <em>injector class</em> inject <em>service class</em> vào <em>client class</em> thông qua một setter method.</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre>class Student {
+
+    private lateinit var book: TextBook
+
+    fun learn() {
+        println("Learning ${book.getSubjectName()}")
+    }
+
+    fun setTextBook(book: TextBook) {
+        this.book = book
+    }
+}
+</pre></table></code></div></div><h1 id="cùng-nhìn-lại">Cùng nhìn lại</h1><p>Vậy là, trong bài học đầu tiên với một mả lý thuyết này, chúng ta đã vào đời với một chương trình nhỏ, ngây thơ và trong sáng. Nhưng rồi, khi bài toán được mở rộng ra: mối quan hệ giữa các class nhiều hơn, số lượng dependency phải khởi tạo và quản lý nhiều hơn. Chúng ta sẽ cần thêm những design principle như <em>Inversion of Control</em>, <em>Dependency inversion</em> hay những design pattern như <em>Dependency injection</em> để giữ cho code của chúng ta mãi ở tuổi 18…</p><p>BTW, mình hy vọng bài viết trước hết sẽ giúp các bạn phân biệt được các khái niệm nghe có vẻ na ná nhau này, sau đó là nắm rõ, trước khi đi vào tìm hiểu một công cụ không mới nhưng không phải ai cũng chắc tay khi sử dụng; một công cụ nhằm giải quyết những nhàm chán lặp lại khi viết code nếu chúng ta tự implement các khái niệm đã được đề cập ở phần I này. Đó là <strong>Dagger 2</strong>.</p></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/programming/'>Programming</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/android/" class="post-tag no-text-decoration" >android</a> <a href="/tags/dependency-injection/" class="post-tag no-text-decoration" >dependency injection</a> <a href="/tags/dagger/" class="post-tag no-text-decoration" >dagger</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=[Android] Dagger 2 - Phần I: Basic principles - srinnix13&url=https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=[Android] Dagger 2 - Phần I: Basic principles - srinnix13&u=https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://telegram.me/share?text=[Android] Dagger 2 - Phần I: Basic principles - srinnix13&url=https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://srinnix1395.github.io/posts/Android-Dagger2-Ph%E1%BA%A7n-I/" data-toggle="tooltip" data-placement="top" title="Linkedin" target="_blank" rel="noopener" aria-label="Linkedin"> <i class="fa-fw fab fa-linkedin"></i> </a> <i class="fa-fw fas fa-link small" onclick="copyLink()" data-toggle="tooltip" data-placement="top" title="Copy link"></i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted topbar-down"><div class="access"><div id="access-lastmod" class="post"> <span>Recent Update</span><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/posts/Android-Dagger2-Ph%E1%BA%A7n-IV/">[Android] Dagger 2 - Phần IV: A new horizon</a><li><a href="/posts/Android-Dagger2-Ph%E1%BA%A7n-I/">[Android] Dagger 2 - Phần I: Basic principles</a><li><a href="/posts/Android-Dagger2-Ph%E1%BA%A7n-II/">[Android] Dagger 2 - Phần II: Into the Dagger 2</a><li><a href="/posts/Android-Dagger-2-Ph%E1%BA%A7n-III-1/">[Android] Dagger 2 - Phần III - 1: The time of our dependencies</a><li><a href="/posts/Android-Dagger-2-Ph%E1%BA%A7n-III-2/">[Android] Dagger 2 - Phần III - 2: The time of our dependencies</a></ul></div><div id="access-tags"> <span>Trending Tags</span><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/android/">android</a> <a class="post-tag" href="/tags/dagger/">dagger</a> <a class="post-tag" href="/tags/dependency-injection/">dependency injection</a> <a class="post-tag" href="/tags/bitmap/">bitmap</a> <a class="post-tag" href="/tags/design/">design</a> <a class="post-tag" href="/tags/image/">image</a> <a class="post-tag" href="/tags/layout/">layout</a> <a class="post-tag" href="/tags/recyclerview/">recyclerview</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"> <span class="pl-3 pt-2 mb-2">Contents</span><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="post-extend-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/Android-Dagger2-Ph%E1%BA%A7n-II/"><div class="card-body"> <span class="timeago small" > Apr 20 <i class="unloaded">2021-04-20T07:42:02+00:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>[Android] Dagger 2 - Phần II: Into the Dagger 2</h3><div class="text-muted small"><p> Bài viết là phần thứ II của series bài học vỡ lòng về Dagger 2. Nếu bạn chưa đọc phần trước, bạn có thể ghi danh vào lớp học tại đây Các bài học để lên lớp [Android] Dagger 2 - Phần I: Basic p...</p></div></div></a></div><div class="card"> <a href="/posts/Android-Dagger-2-Ph%E1%BA%A7n-III-1/"><div class="card-body"> <span class="timeago small" > Apr 20 <i class="unloaded">2021-04-20T07:42:03+00:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>[Android] Dagger 2 - Phần III - 1: The time of our dependencies</h3><div class="text-muted small"><p> Bài viết là phần thứ III của series bài học vỡ lòng về Dagger 2. Nếu bạn chưa đọc các phần trước, bạn có thể ghi danh vào lớp học tại đây Các bài học để lên lớp [Android] Dagger 2 - Phần I: Ba...</p></div></div></a></div><div class="card"> <a href="/posts/Android-Dagger-2-Ph%E1%BA%A7n-III-2/"><div class="card-body"> <span class="timeago small" > Apr 20 <i class="unloaded">2021-04-20T07:42:04+00:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>[Android] Dagger 2 - Phần III - 2: The time of our dependencies</h3><div class="text-muted small"><p> Bài viết là phần thứ III của series bài học vỡ lòng về Dagger 2. Nếu bạn chưa đọc các phần trước, bạn có thể ghi danh vào lớp học tại đây Các bài học để lên lớp [Android] Dagger 2 - Phần I: Ba...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/Android-T%E1%BA%A1o-thumbnail-cho-l%E1%BA%A7n-%C4%91%E1%BA%A7u-ti%C3%AAn/" class="btn btn-outline-primary" prompt="Older"><p>[Android] Tạo thumbnail cho lần đầu tiên</p></a> <a href="/posts/Android-Dagger2-Ph%E1%BA%A7n-II/" class="btn btn-outline-primary" prompt="Newer"><p>[Android] Dagger 2 - Phần II: Into the Dagger 2</p></a></div></div></div></div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script> <script type="text/javascript"> const imgs = document.querySelectorAll('.post-content img'); const observer = lozad(imgs); observer.observe(); </script><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center"><div class="footer-left"><p class="mb-0"> © 2021 <a href="https://twitter.com/srinnix13">tuha3</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><h4 class="text-muted mb-4">Trending Tags</h4><a class="post-tag" href="/tags/android/">android</a> <a class="post-tag" href="/tags/dagger/">dagger</a> <a class="post-tag" href="/tags/dependency-injection/">dependency injection</a> <a class="post-tag" href="/tags/bitmap/">bitmap</a> <a class="post-tag" href="/tags/design/">design</a> <a class="post-tag" href="/tags/image/">image</a> <a class="post-tag" href="/tags/layout/">layout</a> <a class="post-tag" href="/tags/recyclerview/">recyclerview</a></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.7.3/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="https://srinnix1395.github.io{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script>
